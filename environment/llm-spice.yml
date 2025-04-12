@@ -1,0 +1,41 @@
+name: llm-spice
+channels:
+  - conda-forge
+dependencies:
+# Basics
+  - python=3.12
+  - black  # Code formatter
+  - sphinx  # Documentation
+# Huggingface transformers library
+  - huggingface_hub=0.30
+  - transformers=4.51.0
+
+# Azure
+  - azure-ai-ml = 1.23
+  - azure-identity = 1.21
+  - azure-storage-file-datalake = 12.19
+  - azure-keyvault = 4.3
+
+# Tensorflow backend for transformers
+  - pip
+  - pip:
+      - torch
+      - torchvision
+      - hf_xet
+      - accelerate
+      - compressed-tensors
+
+variables:
+# Tell python to look for modules in the root directory of the project
+# (A hack, needs to be edited for every installation, but makes code
+#  management much easier.)
+# Replace with the path to your project directory root.
+  PYTHONPATH: /home/users/philip.brohan/Projects/Readiness-LLMs
+
+# Tell huggingface where to store model weights
+  HF_HOME: /data/users/philip.brohan/huggingface
+
+# Azure ML subscription, workspace and resource group
+  AZML_SUBSCRIPTION_ID: 79c7890c-2a30-44ef-aa8d-419d25b7bb8e
+  AZML_WORKSPACE_NAME: ai4climate-scratch
+  AZML_RESOURCE_GROUP: rg-AI4-Climate

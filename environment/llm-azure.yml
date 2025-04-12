@@ -1,0 +1,25 @@
+name: llm-azure
+
+# Not a complete environment - a supplement to an Azure base environment
+
+channels:
+  - conda-forge
+dependencies:
+# Basics
+  - python=3.12
+# Huggingface transformers library
+  - huggingface_hub=0.30
+  - transformers=4.51.0
+
+# Azure - need the keyvault
+  - azure-identity = 1.21
+  - azure-keyvault = 4.3
+
+# Tensorflow backend for transformers
+  - pip
+  - pip:
+      - torch
+      - torchvision
+#      - hf_xet  # Not sure this works properly on Azure?
+      - accelerate
+      - compressed-tensors
