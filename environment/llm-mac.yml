@@ -1,4 +1,6 @@
-name: llm-spice
+name: llm-mac
+
+# Same as llm-spice, except targeted at my Mac
 channels:
   - conda-forge
 dependencies:
@@ -10,13 +12,7 @@ dependencies:
   - huggingface_hub=0.30
   - transformers=4.51.0
 
-# Azure
-  - azure-ai-ml = 1.23
-  - azure-identity = 1.21
-  - azure-storage-file-datalake = 12.19
-  - azure-keyvault = 4.3
-
-# Torch backend for transformers
+# Torch backend for huggingface
   - pip
   - pip:
       - torch
@@ -30,12 +26,8 @@ variables:
 # (A hack, needs to be edited for every installation, but makes code
 #  management much easier.)
 # Replace with the path to your project directory root.
-  PYTHONPATH: /home/users/philip.brohan/Projects/Readiness-LLMs
+  PYTHONPATH: /Users/philip/Projects/Readiness-LLMs
 
 # Tell huggingface where to store model weights
-  HF_HOME: /data/users/philip.brohan/huggingface
+  HF_HOME: /Users/philip/huggingface
 
-# Azure ML subscription, workspace and resource group
-  AZML_SUBSCRIPTION_ID: 79c7890c-2a30-44ef-aa8d-419d25b7bb8e
-  AZML_WORKSPACE_NAME: ai4climate-scratch
-  AZML_RESOURCE_GROUP: rg-AI4-Climate

@@ -5,19 +5,17 @@
 
 from transformers import AutoProcessor, Gemma3ForConditionalGeneration
 from PIL import Image
-import os
 import torch
-from huggingface_hub import login
 
-login(token=os.getenv("HF_KEY"))
-
-model_id = "google/gemma-3-27b-it"
+model_id = "google/gemma-3-4b-it"
 
 model = Gemma3ForConditionalGeneration.from_pretrained(
     model_id, device_map="auto"
 ).eval()
 
 processor = AutoProcessor.from_pretrained(model_id)
+
+url1 = "https://s3-eu-west-1.amazonaws.com/textract.samples/Farragut-DD-348-1942-01-0021.jpg"
 
 messages = [
     {
@@ -27,11 +25,11 @@ messages = [
     {
         "role": "user",
         "content": [
+            {"type": "image", "url": url1},
             {
-                "type": "image",
-                "image": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/bee.jpg",
+                "type": "text",
+                "text": "Give the ship's Latitude and Longitude at Noon.",
             },
-            {"type": "text", "text": "Describe this image in detail."},
         ],
     },
 ]

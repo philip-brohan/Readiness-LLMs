@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Test script to run Gemma 3.0 27B
+# Test script to run Gemma 3.0 4B
 # Downloads the model weights if not already on disk.
 
 from transformers import AutoProcessor, Gemma3ForConditionalGeneration
@@ -11,7 +11,7 @@ from huggingface_hub import login
 
 login(token=os.getenv("HF_KEY"))
 
-model_id = "google/gemma-3-27b-it"
+model_id = "google/gemma-3-4b-it"
 
 model = Gemma3ForConditionalGeneration.from_pretrained(
     model_id, device_map="auto"
