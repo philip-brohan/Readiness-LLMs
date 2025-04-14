@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
-# Test script to run Gemma 3.0 27B
+# Test script to run Gemma 3.0 4B
 # Downloads the model weights if not already on disk.
+
+# Login to Huggingface (in case we need the weights)
+from utils.hf import HFlogin
+
+HFlogin()
 
 from transformers import AutoProcessor, Gemma3ForConditionalGeneration
 from PIL import Image
@@ -45,8 +50,10 @@ inputs = processor.apply_chat_template(
 input_len = inputs["input_ids"].shape[-1]
 
 with torch.inference_mode():
-    generation = model.generate(**inputs, max_new_tokens=100, do_sample=False)
+    generation = model.generate(
+        **inputs, max_new_tokens=1000, do_sample=False, top_k=None
+    )
     generation = generation[0][input_len:]
 
-decoded = processor.decode(generation, skip_special_tokens=True)
+decoded = processor.decode(generation, skip_special_tokens=False)
 print(decoded)

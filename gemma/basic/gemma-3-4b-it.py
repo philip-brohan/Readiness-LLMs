@@ -4,12 +4,10 @@
 # Downloads the model weights if not already on disk.
 
 from transformers import AutoProcessor, Gemma3ForConditionalGeneration
-from PIL import Image
-import os
 import torch
-from huggingface_hub import login
+from utils.hf import HFlogin
 
-login(token=os.getenv("HF_KEY"))
+HFlogin()
 
 model_id = "google/gemma-3-4b-it"
 
@@ -47,7 +45,13 @@ inputs = processor.apply_chat_template(
 input_len = inputs["input_ids"].shape[-1]
 
 with torch.inference_mode():
-    generation = model.generate(**inputs, max_new_tokens=100, do_sample=False)
+    generation = model.generate(
+        **inputs,
+        max_new_tokens=1000,
+        do_sample=False,
+        top_k=None,
+        top_p=None,
+    )
     generation = generation[0][input_len:]
 
 decoded = processor.decode(generation, skip_special_tokens=True)

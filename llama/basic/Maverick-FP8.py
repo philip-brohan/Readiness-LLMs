@@ -3,11 +3,9 @@
 # Test script to run Llama Maverick FP8
 # Downloading the weights if not already on disc.
 
-import os
+from utils.hf import HFlogin
 
-from huggingface_hub import login
-
-login(token=os.getenv("HF_KEY"))
+HFlogin()
 
 from transformers import (
     AutoProcessor,

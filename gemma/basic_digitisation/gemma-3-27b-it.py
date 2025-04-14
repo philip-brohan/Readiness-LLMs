@@ -2,6 +2,9 @@
 
 # Test script to run Gemma 3.0 27B
 # Downloads the model weights if not already on disk.
+from utils.hf import HFlogin
+
+HFlogin()
 
 from transformers import AutoProcessor, Gemma3ForConditionalGeneration
 from PIL import Image
@@ -46,7 +49,7 @@ inputs = processor.apply_chat_template(
 input_len = inputs["input_ids"].shape[-1]
 
 with torch.inference_mode():
-    generation = model.generate(**inputs, max_new_tokens=100, do_sample=False)
+    generation = model.generate(**inputs, max_new_tokens=1000, do_sample=False)
     generation = generation[0][input_len:]
 
 decoded = processor.decode(generation, skip_special_tokens=True)

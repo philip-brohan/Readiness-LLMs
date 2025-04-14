@@ -3,11 +3,9 @@
 # Test script to run Llama Scout
 # Downloading the weights if not already on disc.
 
-import os
+from utils.hf import HFlogin
 
-from huggingface_hub import login
-
-login(token=os.getenv("HF_KEY"))
+HFlogin()
 
 from transformers import AutoProcessor, Llama4ForConditionalGeneration
 import torch
@@ -48,7 +46,10 @@ inputs = processor.apply_chat_template(
 
 outputs = model.generate(
     **inputs,
-    max_new_tokens=256,
+    max_new_tokens=1000,
+    do_sample=False,
+    top_k=None,
+    top_p=None,
 )
 
 response = processor.batch_decode(outputs[:, inputs["input_ids"].shape[-1] :])[0]

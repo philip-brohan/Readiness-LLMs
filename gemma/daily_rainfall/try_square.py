@@ -8,6 +8,8 @@ HFlogin()
 
 from transformers import AutoProcessor, Gemma3ForConditionalGeneration
 from PIL import Image
+import requests
+from io import BytesIO
 import torch
 
 model_id = "google/gemma-3-27b-it"
@@ -20,22 +22,30 @@ processor = AutoProcessor.from_pretrained(model_id)
 
 # Test image to get data from
 # url1 = "https://brohan.org/AI_daily_precip/_images/Devon_1941-1950_RainNos_1651-1689-293.jpg"
-url1 = "https://brohan.org/AI_daily_precip/_images/missing_infilled.jpg"
+# url1 = "https://brohan.org/AI_daily_precip/_images/missing_infilled.jpg"
+url1 = "https://brohan.org/AI_daily_precip/_images/original.jpg"
+response = requests.get(url1)
+image = Image.open(BytesIO(response.content))
+
+# Crop and resize the image so it's 850 pixels square
+# I.e. so that it's the optimum shape for Gemma.
+# I don't want to distort it, so I will crop it to a square.
+crop = image.crop([0, image.size[1] - image.size[0], image.size[0], image.size[1]])
+smaller = crop.resize([850, 850])
 
 # System prompt
 s_prompt = (
     "You are a climate scientist. Your task is to extract climate data from pages containing historical observations. "
     + "The pages you are working on are records of daily rainfall from the UK Met Office. "
-    + "Each page contains the data from one weather station for one year. One entry for each day in the year."
-    + "The values are in a table where the columns are the months, and the rows are the days in each month. "
-    + "The entries are rainfall values. On some days it does not rain, and the entry for that day may be blank or contain a dash. "
-    + "When asked for the value for that day, you should return '-' if there is no number in the corresponding table cell. "
+    + "Each page contains part of a data table - the first column contains the day of the month, "
+    + "the second column contains the rainfall value for that day in January, "
+    + "the third column contains the rainfall value for that day in February, "
+    + "and so on for each month of the year. "
 )
 
-
 Questions = [
-    "List the rainfall values for each day in January. ",
-    "List the rainfall values for each day in February. ",
+    "List the rainfall values for the 10th to 20th of January. ",
+    "List the rainfall values for the 10th to 20th of February. ",
     # "List the rainfall values for each day in March. ",
     # "List the rainfall values for each day in April. ",
     # "List the rainfall values for each day in May. ",
@@ -57,7 +67,7 @@ for q in Questions:
         {
             "role": "user",
             "content": [
-                {"type": "image", "url": url1},
+                {"type": "image", "image": smaller},
                 {
                     "type": "text",
                     "text": q,
@@ -77,7 +87,9 @@ for q in Questions:
     input_len = inputs["input_ids"].shape[-1]
 
     with torch.inference_mode():
-        generation = model.generate(**inputs, max_new_tokens=1000, do_sample=False)
+        generation = model.generate(
+            **inputs, max_new_tokens=1000, do_sample=False, top_k=None, top_p=None
+        )
         generation = generation[0][input_len:]
 
     decoded = processor.decode(generation, skip_special_tokens=True)
